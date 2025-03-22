@@ -6,6 +6,7 @@ use App\Models\Media;
 use Carbon\CarbonInterval;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Facades\Log;
 
 class ProcessMediaUrl implements ShouldQueue
 {
@@ -40,11 +41,39 @@ class ProcessMediaUrl implements ShouldQueue
         $trackMediaUrl = (string) $track->enclosure['url'];
 
         $namespaces = $xml->getNamespaces(true);
-        $itunesNamespace = $namespaces['itunes'];
+        $itunesNamespace = $namespaces['itunes'] ?? null;
 
-        $trackLength = $track->children($itunesNamespace)->duration;
+        $trackLength = null;
 
-        $interval = CarbonInterval::createFromFormat('H:i:s', $trackLength);
+        if ($itunesNamespace) {
+            $trackLength = $track->children($itunesNamespace)->duration;
+        }
+
+        if (empty($itunesNamespace)) {
+            $fileSize = (int) $track->enclosure['length'];
+            $bitrate = 128000; // Assumes 128kbps as standard bitrate
+            $durationInSeconds = ceil($fileSize * 8 / $bitrate);
+            $trackLength = (string) $durationInSeconds;
+        }
+
+        try {
+            if (str_contains($trackLength, ":")) {
+                // duration is in HH:MM:SS or MM:SS format
+                $parts = explode(":", $trackLength);
+                if (count($parts) == 2) {
+                    CarbonInterval::createFromFormat('i:s', $trackLength);
+                } elseif (count($parts) == 3) {
+                    CarbonInterval::createFromFormat('H:i:s', $trackLength);
+                } else {
+                    throw new \Exception('Unexpected duration format');
+                };
+            } else {
+                $interval = CarbonInterval::seconds((int) $trackLength);
+            }
+        } catch (\Exception $e) {
+            Log::error("Error parsing track duration: " . $e->getMessage());
+            $interval = CarbonInterval::hour(); // Default to 1 hour
+        }
 
         $endTime = $this->room->start_time->add($interval);
 
