@@ -21,6 +21,7 @@ export default {
             fontFamily: {
                 sans: ['Montserrat', ...defaultTheme.fontFamily.sans],
                 serif: ['Denk One', ...defaultTheme.fontFamily.serif],
+                cursive: ['Audiowide', 'cursive'],
             },
             colors: {
                 surface: {
