@@ -19,7 +19,8 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                sans: ['Montserrat', ...defaultTheme.fontFamily.sans],
+                serif: ['Denk One', ...defaultTheme.fontFamily.serif],
             },
             colors: {
                 surface: {
@@ -39,15 +40,18 @@ export default {
                     200: colors.purple[600],
                     500: colors.lime[500],    // Dark secondary color
                 },
-
+                positive: colors.green[400],           // Positive color
+                negative: colors.red[500],             // Negative color
+                warning: colors.amber[500],            // Warning color
+                info: colors.sky[500],                 // Info color
                 on: {
                     surface: {
                         600: colors.slate[600],        // Light on-surface color
                         100: colors.violet[100],  // Dark on-surface color
-                    },
-                    strong: {
-                        800: colors.purple[800],// Light on-surface strong color
-                        100: colors.slate[100], // Dark on-surface strong color
+                        strong: {
+                            800: colors.purple[800],// Light on-surface strong color
+                            100: colors.slate[100], // Dark on-surface strong color
+                        },
                     },
                     primary: {
                         100: colors.slate[100],       // Light on-primary color
@@ -62,17 +66,13 @@ export default {
                     info: colors.slate[100],               // Info color
                 },
                 outline: {
-                    transparent: colors.transparent,           // Light outline color
+                    300: colors.slate[300],           // Light outline color
                     700: colors.slate[700],     // Dark outline color
                     strong: {
                         800: colors.slate[800],   // Light outline strong color
                         400: colors.slate[400],// Dark outline strong color
                     },
                 },
-                positive: colors.green[400],           // Positive color
-                negative: colors.red[500],             // Negative color
-                warning: colors.amber[500],            // Warning color
-                info: colors.sky[500],                 // Info color
             },
             borderRadius: {
                 radius: defaultTheme.borderRadius.xl,
