@@ -43,6 +43,6 @@ class NewMessageEvent implements ShouldBroadcastNow
      */
     public function broadcastAs()
     {
-        return 'new.message';
+        return 'new-message';
     }
 }
