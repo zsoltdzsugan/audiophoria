@@ -61,9 +61,9 @@ class ProcessMediaUrl implements ShouldQueue
                 // duration is in HH:MM:SS or MM:SS format
                 $parts = explode(":", $trackLength);
                 if (count($parts) == 2) {
-                    CarbonInterval::createFromFormat('i:s', $trackLength);
+                    $interval = CarbonInterval::createFromFormat('i:s', $trackLength);
                 } elseif (count($parts) == 3) {
-                    CarbonInterval::createFromFormat('H:i:s', $trackLength);
+                    $interval = CarbonInterval::createFromFormat('H:i:s', $trackLength);
                 } else {
                     throw new \Exception('Unexpected duration format');
                 };
