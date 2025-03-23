@@ -38,6 +38,7 @@ new class extends Component {
     public function with()
     {
         $rooms = Room::where('is_active', true)
+            ->where('end_time', ">", now())
             ->orderBy('start_time', 'asc')
             ->with('track.media')
             ->get();
@@ -78,28 +79,26 @@ new class extends Component {
                                             <x-avatar src="{{ $room->track->media->artwork_url ?? 'https://placehold.co/128'}}" size="w-32 h-32" icon-size="2xl" rounded="xl" alt="Media Artwork" class="border-none"/>
                                         </div>
                                         <div class="flex flex-col flex-1 min-w-0 justify-around">
-                                            <p class="text-md font-semibold text-on-surface-strong-800 dark:text-on-surface-strong-100 truncate">{{ $room->name }}</p>
+                                            <p class="text-md font-serif text-on-surface-strong-800 dark:text-on-surface-strong-100 truncate">{{ $room->name }}</p>
                                             <div class="flex flex-col gap-1">
                                                 <p class="text-sm truncate max-w-xs">{{ $room->track->title ?? 'No Title Available' }}</p>
                                                 <p class="text-xs tracking-tight uppercase">{{ $room->media->title }}</p>
                                             </div>
                                             <div class="text-xs text-pretty" x-data="{
-                                                startTime: '{{ $room->start_time->toIso8601String() }}',
+                                                startTime: '{{ $room->start_time->timestamp }}',
                                                 countdownText: '',
                                                 isLive: {{ $room->start_time->isPast() && $room->is_active ? 'true' : 'false' }},
                                                 updateCountdown() {
-                                                    const start = new Date(this.startTime).getTime();
-                                                    const now = new Date().getTime();
-                                                    const remaining = start - now;
+                                                    const now = Math.floor(Date.now() / 1000);
+                                                    const timeUntilStart = this.startTime - now;
 
-                                                    if (remaining < 0) {
-                                                        this.countdownText = 'Started';
+                                                    if (timeUntilStart < 0) {
                                                         this.isLive = true;
                                                     } else {
-                                                        const days = Math.floor(remaining / (1000 * 60 * 60 * 24));
-                                                        const hours = Math.floor((remaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                                                        const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
-                                                        const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
+                                                        const days = Math.floor(timeUntilStart / 86400);
+                                                        const hours = Math.floor((timeUntilStart % 86400) / 3600);
+                                                        const minutes = Math.floor((timeUntilStart % 3600) / 60);
+                                                        const seconds = timeUntilStart % 60;
                                                         this.countdownText = `${days}d ${hours}h ${minutes}m ${seconds}s`;
                                                     }
                                                 }
