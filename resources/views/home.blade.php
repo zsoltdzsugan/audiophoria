@@ -17,8 +17,7 @@
         <wireui:scripts />
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="antialiased font-sans bg-surface-50 dark:bg-surface-950 text-on-surface-600 dark:text-on-surface-100">
-        <h1 class="font-cursive text-center text-primary-500 dark:text-primary-600 text-4xl mt-6 underline underline-offset-4">audiophoria</h1>
+    <body class="antialiased max-w-screen min-h-screen font-sans bg-surface-50 dark:bg-surface-950 text-on-surface-600 dark:text-on-surface-100">
         <livewire:dashboard />
     </body>
 </html>
