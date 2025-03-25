@@ -58,119 +58,138 @@ new class extends Component {
     }
 }; ?>
 
-<div x-data="{
-        audio: null,
-        isLoading: true,
-        isLive: false,
-        isPlaying: false,
-        isReady: false,
-        currentTime: 0,
-        audioMetadataLoaded: false,
-        startTimestamp: {{ $room->start_time->timestamp }},
-        endTimestamp: {{ $room->end_time ? $room->end_time->timestamp : 'null' }},
-        countdownText: '',
-        copyNotification: false,
+<div x-data="{ 
+    audio: null,
+    isLoading: true,
+    isLive: false,
+    isPlaying: false,
+    isReady: false,
+    currentTime: 0,
+    audioMetadataLoaded: false,
+    volume: 1,
+    startTimestamp: {{ $room->start_time->timestamp }},
+    endTimestamp: {{ $room->end_time ? $room->end_time->timestamp : 'null' }},
+    countdownText: '',
+    copyNotification: false,
+    
+    adjustVolume(event) {
+        if (this.audio) {
+            const delta = event.deltaY > 0 ? -0.1 : 0.1;
+            this.volume = Math.max(0, Math.min(1, this.volume + delta));
+            this.audio.volume = this.volume;
+        }
+    },
 
-        init() {
-            this.startCountdown();
-            if (this.$refs.audioPlayer && !this.isFinished) {
-                this.initializeAudioPlayer();
-            }
-        },
-
-        initializeAudioPlayer() {
-            this.audio = this.$refs.audioPlayer;
-            this.audio.addEventListener('loadedmetadata', () => {
-                this.isLoading = false;
-                this.audioMetadataLoaded = true;
-                this.checkLiveStatus();
-            });
-
-            this.audio.addEventListener('timeupdate', () => {
-                this.currentTime = this.audio.currentTime;
-                if (this.endTimestamp && this.currentTime >= (this.endTimestamp - this.startTimestamp)) {
-                    this.endRoom();
-                }
-            });
-
-            this.audio.addEventListener('play', () => {
-                this.isPlaying = true;
-                this.isReady = true;
-            });
-
-            this.audio.addEventListener('pause', () => {
-                this.isPlaying = false;
-            });
-
-            this.audio.addEventListener('ended', () => {
-                this.endRoom();
-            });
-        },
-
-        startCountdown() {
-            this.checkLiveStatus();
-            setInterval(() => this.checkLiveStatus(), 1000);
-        },
-
-        checkLiveStatus() {
-            const now = Math.floor(Date.now() / 1000);
-            const timeUntilStart = this.startTimestamp - now;
-
-            if (timeUntilStart <= 0) {
-                this.isLive = true;
-                if (this.audio && !this.isPlaying && !this.isFinished) {
-                    this.playAudio();
-                }
+    togglePlay() {
+        if (this.audio) {
+            if (this.isPlaying) {
+                this.audio.pause();
             } else {
-                const days = Math.floor(timeUntilStart / 86400);
-                const hours = Math.floor((timeUntilStart % 86400) / 3600);
-                const minutes = Math.floor((timeUntilStart % 3600) / 60);
-                const seconds = timeUntilStart % 60;
-                this.countdownText = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+                this.audio.play();
             }
-        },
+        }
+    },
 
-        playAudio() {
-            if (!this.audio) return;
-            const now = Math.floor(Date.now() / 1000);
-            const elapsedTime = Math.max(0, now - this.startTimestamp);
-            this.audio.currentTime = elapsedTime;
-            this.audio.play().catch(error => {
-                console.error('Playback failed: ', error);
-                this.isPlaying = false;
-                this.isReady = false;
-            });
-        },
+    init() {
+        this.startCountdown();
+        if (this.$refs.audioPlayer && !this.isFinished) {
+            this.initializeAudioPlayer();
+        }
+    },
 
-        confirmReady() {
+    initializeAudioPlayer() {
+        this.audio = this.$refs.audioPlayer;
+        this.audio.addEventListener('loadedmetadata', () => {
+            this.isLoading = false;
+            this.audioMetadataLoaded = true;
+            this.checkLiveStatus();
+        });
+
+        this.audio.addEventListener('timeupdate', () => {
+            this.currentTime = this.audio.currentTime;
+            if (this.endTimestamp && this.currentTime >= (this.endTimestamp - this.startTimestamp)) {
+                this.endRoom();
+            }
+        });
+
+        this.audio.addEventListener('play', () => {
+            this.isPlaying = true;
             this.isReady = true;
-            if (this.isLive && this.audio && !this.isFinished) {
+        });
+
+        this.audio.addEventListener('pause', () => {
+            this.isPlaying = false;
+        });
+
+        this.audio.addEventListener('ended', () => {
+            this.endRoom();
+        });
+    },
+
+    startCountdown() {
+        this.checkLiveStatus();
+        setInterval(() => this.checkLiveStatus(), 1000);
+    },
+
+    checkLiveStatus() {
+        const now = Math.floor(Date.now() / 1000);
+        const timeUntilStart = this.startTimestamp - now;
+
+        if (timeUntilStart <= 0) {
+            this.isLive = true;
+            if (this.audio && !this.isPlaying && !this.isFinished) {
                 this.playAudio();
             }
-        },
+        } else {
+            const days = Math.floor(timeUntilStart / 86400);
+            const hours = Math.floor((timeUntilStart % 86400) / 3600);
+            const minutes = Math.floor((timeUntilStart % 3600) / 60);
+            const seconds = timeUntilStart % 60;
+            this.countdownText = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+        }
+    },
 
-        formatTime(seconds) {
-            const minutes = Math.floor(seconds / 60);
-            const remainingSeconds = Math.floor(seconds % 60);
-            return `${minutes}:${remainingSeconds.toString().padStart(2,'0')}`;
-        },
-
-        endRoom() {
-            $wire.isFinished = true;
-            $wire.$refresh();
+    playAudio() {
+        if (!this.audio) return;
+        const now = Math.floor(Date.now() / 1000);
+        const elapsedTime = Math.max(0, now - this.startTimestamp);
+        this.audio.currentTime = elapsedTime;
+        this.audio.play().catch(error => {
+            console.error('Playback failed: ', error);
             this.isPlaying = false;
-            if (this.audio) {
-                this.audio.pause();
-            }
-        },
+            this.isReady = false;
+        });
+    },
 
-        copyToClipboard() {
-            navigator.clipboard.writeText(window.location.href);
-            this.copyNotification = true;
-            setTimeout(() => this.copyNotification = false, 2000);
-        },
+    confirmReady() {
+        this.isReady = true;
+        if (this.isLive && this.audio && !this.isFinished) {
+            this.playAudio();
+        }
+    },
 
-    }" x-init="init()" class="bg-surface-50 dark:bg-surface-95">
+    formatTime(seconds) {
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = Math.floor(seconds % 60);
+        return `${minutes}:${remainingSeconds.toString().padStart(2,'0')}`;
+    },
+
+    endRoom() {
+        $wire.isFinished = true;
+        $wire.$refresh();
+        this.isPlaying = false;
+        if (this.audio) {
+            this.audio.pause();
+        }
+    },
+
+    copyToClipboard() {
+        navigator.clipboard.writeText(window.location.href);
+        this.copyNotification = true;
+        setTimeout(() => this.copyNotification = false, 2000);
+    },
+
+}" x-init="init()" class="min-h-screen bg-surface-50 dark:bg-surface-950">
     @if($room->end_time === null)
         <div wire:poll.5s class="flex items-center justify-center min-h-screen p-4 bg-surface-50 dark:bg-surface-950" x-cloak>
             <div class="w-full max-w-xl shadow-sm bg-surface-alt-100 items-center justify-between rounded-xl p-4 outline outline-offset-4 outline-surface-alt-100 dark:outline-outline-700">
@@ -215,115 +234,149 @@ new class extends Component {
         </div>
     @else
         <audio x-ref="audioPlayer" :src="'{{ $room->track->media_url }}'" preload="auto"></audio>
-        <div x-show="!isLive" class="flex min-h-screen p-4 gap-4 bg-surface-50 dark:bg-surface-950" x-cloak>
-            <div class="w-full max-w-3xl shadow-sm bg-surface-alt-100 items-center justify-between rounded-xl p-4 outline outline-offset-4 outline-surface-alt-100 dark:outline-outline-700  transition-all ease-in-out duration-200 group" x-bind:class="isReady ? '' : 'hover:outline-offset-0 hover:outline-primary-500 dark:hover:outline-primary-600'">
-                <div class="flex space-x-4">
-                    <div class="flex items-center justify-between w-full space-x-6">
-                        <div class="flex-shrink-0">
-                            <x-avatar src="{{ $room->track->media->artwork_url ?? 'https://placehold.co/128'}}" size="w-32 h-32" icon-size="2xl" rounded="xl" alt="Media Artwork" class="border-none"/>
+        <div class="flex h-screen p-4 gap-4">
+            <!-- Left Column (2/3) -->
+            <div class="w-2/3 flex flex-col gap-4">
+                <!-- Video/Artwork Area -->
+                <div class="flex-1 bg-surface-alt-100 rounded-xl p-4 outline outline-offset-4 outline-surface-alt-100 dark:outline-outline-700">
+                    <div class="h-full flex flex-col">
+                        <!-- Main Content Area -->
+                        <div class="flex-1 flex items-center justify-center">
+                            <template x-if="!isLive">
+                                <div class="text-center">
+                                    <h2 class="text-2xl font-bold mb-2">Starts in:</h2>
+                                    <div class="text-4xl font-bold" x-text="countdownText"></div>
+                                </div>
+                            </template>
+                            <template x-if="isLive">
+                                <div class="w-full h-full flex flex-col items-center justify-center">
+                                    <img src="{{ $room->track->media->artwork_url ?? 'https://placehold.co/400'}}" class="max-h-[400px] rounded-xl" alt="Media Artwork">
+                                </div>
+                            </template>
                         </div>
-                        <div class="flex flex-col flex-1 min-w-0 justify-around">
-                            <p class="text-lg font-serif text-on-surface-strong-800 dark:text-on-surface-strong-100 truncate">{{ $room->name }}</p>
-                            <div class="flex flex-col gap-1">
-                                <p class="text-md truncate max-w-xs">{{ $room->track->title ?? 'No Title Available' }}</p>
-                                <p class="text-sm tracking-tight uppercase">{{ $room->media->title }}</p>
+                        
+                        <!-- Progress Bar (Only visible when live) -->
+                        <div x-show="isLive && !isLoading" class="mt-4">
+                            <div class="w-full bg-surface-200 rounded-full h-2">
+                                <div class="bg-primary-500 h-2 rounded-full" :style="'width: ' + (currentTime / audio?.duration * 100) + '%'"></div>
                             </div>
-                        </div>
-
-                        <div class="relative z-20 flex justify-start items-center">
-                            <button @click="copyToClipboard();" class="flex items-center justify-center w-auto h-8 px-3 py-1 text-xs bg-surface-50 dark:bg-surface-950 border rounded-xl cursor-pointer border-neutral-200/60 hover:bg-white active:bg-white focus:bg-white focus:outline-none text-neutral-500 hover:text-neutral-600 group">
-                                <span x-show="!copyNotification">Copy Room Link</span>
-                                <svg x-show="!copyNotification" class="w-4 h-4 ml-1.5 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z"/> </svg>
-                                <span x-show="copyNotification" class="tracking-tight text-green-500"
-                                      x-cloak>Copied</span>
-                                <svg x-show="copyNotification" class="w-4 h-4 ml-1.5 text-green-500 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" x-cloak> <path stroke-linecap="round" stroke-linejoin="round" d="M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m8.9-4.414c.376.023.75.05 1.124.08 1.131.094 1.976 1.057 1.976 2.192V16.5A2.25 2.25 0 0118 18.75h-2.25m-7.5-10.5H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V18.75m-7.5-10.5h6.375c.621 0 1.125.504 1.125 1.125v9.375m-8.25-3l1.5 1.5 3-3.75"/> </svg>
-                            </button>
+                            <div class="flex justify-between text-sm mt-1">
+                                <span x-text="formatTime(currentTime)"></span>
+                                <span x-text="formatTime(audio?.duration || 0)"></span>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="text-center text-md font-serif gap-2">
-                    <p>The show will start in: <span x-text="countdownText"></span></p>
-                </div>
-                <div class="flex w-full mt-4">
-                    <x-button x-show="!isReady" class="w-full" @click="confirmReady()">I allow audio and I'm ready</x-button>
-                    <h3 x-show="isReady" class="w-full text-sm text-center border-2 border-positive bg-positive text-on-surface-positive rounded-xl py-1.5 pointer-events-none">
-                        You're ready for the show! Stay tuned!
-                    </h3>
-                </div>
-            </div>
-            <div class="flex flex-col gap-4 w-full max-h-screen shadow-sm bg-surface-alt-100 items-center justify-between rounded-xl p-4 outline outline-offset-4 outline-surface-alt-100 dark:outline-outline-700  transition-all ease-in-out duration-200 group hover:outline-offset-0 hover:outline-primary-500 dark:hover:outline-primary-600">
-                <div class="flex flex-col w-full max-h-screen gap-4">
-                    <div class="flex flex-col justify-end flex-1 p-4 bg-white w-full rounded-xl overflow-y-auto" id="message-container">
-                        <div class="space-y-1">
-                            @foreach ($messages as $message)
-                                <div class="px-2 py-2 rounded hover:bg-slate-100">
-                                    <div class="flex items-center">
-                                        <x-avatar xs label="{{ strtoupper(substr($message->user->name, 0, 1)) }}"/>
-                                        <div class="flex items-center ml-2 space-x-2">
-                                            <span class="text-xs font-bold text-slate-900">{{ $message->user->name }}:</span>
-                                            <p class="text-sm text-slate-700">{{ $message->message }}</p>
+
+                <!-- Info Box -->
+                <div class="h-1/3 bg-surface-alt-100 rounded-xl p-4 outline outline-offset-4 outline-surface-alt-100 dark:outline-outline-700">
+                    <div class="flex flex-col h-full">
+                        <div class="flex-1">
+                            <template x-if="!isLive">
+                                <!-- Not Live View -->
+                                <div class="flex items-start gap-4">
+                                    <img src="{{ $room->track->media->artwork_url ?? 'https://placehold.co/128'}}" class="w-32 h-32 rounded-xl object-cover" alt="Media Artwork">
+                                    <div>
+                                        <h2 class="text-2xl font-bold mb-2">{{ $room->name }}</h2>
+                                        <p class="text-lg">{{ $room->track->media->title }}</p>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">{{ $room->track->media->artist }}</p>
+                                    </div>
+                                </div>
+                            </template>
+                            <template x-if="isLive">
+                                <!-- Live View - Playlist Table -->
+                                <div class="overflow-y-auto max-h-[calc(100%-80px)]">
+                                    <table class="w-full">
+                                        <thead class="text-left">
+                                            <tr class="border-b border-gray-200 dark:border-gray-700">
+                                                <th class="py-2">Title</th>
+                                                <th class="py-2">Artist</th>
+                                                <th class="py-2">Duration</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr class="border-b border-gray-200 dark:border-gray-700 bg-primary-100 dark:bg-primary-900/20">
+                                                <td class="py-2">{{ $room->track->media->title }}</td>
+                                                <td class="py-2">{{ $room->track->media->artist }}</td>
+                                                <td class="py-2">{{ $room->track->media->duration ?? '0:00' }}</td>
+                                            </tr>
+                                            <!-- Add more tracks here if needed -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </template>
+                        </div>
+                        
+                        <!-- Player Controls -->
+                        <div class="mt-4">
+                            <template x-if="!isLive">
+                                <x-button class="w-full" @click="confirmReady()">
+                                    <span x-text="isReady ? 'Stay Tuned...' : 'I allow audio and I\'m ready'"></span>
+                                </x-button>
+                            </template>
+
+                            <template x-if="isLive">
+                                <div class="flex items-center gap-4">
+                                    <button @click="togglePlay()" class="p-2 rounded-full hover:bg-surface-200">
+                                        <span class="material-symbols-outlined text-2xl" x-text="isPlaying ? 'pause' : 'play_arrow'"></span>
+                                    </button>
+                                    <div class="relative flex-1 group" @wheel.prevent="adjustVolume($event)">
+                                        <div class="h-2 bg-surface-200 rounded-full">
+                                            <div class="h-full bg-primary-500 rounded-full" :style="'width: ' + (volume * 100) + '%'"></div>
+                                        </div>
+                                        <div class="absolute -top-8 left-0 w-full opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <span class="text-sm">Volume: <span x-text="Math.round(volume * 100) + '%'"></span></span>
                                         </div>
                                     </div>
                                 </div>
-                            @endforeach
+                            </template>
                         </div>
-                    </div>
-                    <div class="flex w-full gap-4">
-                        @auth
-                            <form class="flex space-x-2" wire:submit='sendMessage'>
-                                <input type="text" placeholder="Type your message..." wire:model='message' class="flex-1 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                                <x-button primary label="Send" type="submit"/>
-                            </form>
-                        @else
-                            <x-button wire:click="authenticateUser" label="Login to Chat" class="w-full"/>
-                        @endauth
                     </div>
                 </div>
             </div>
-            <div x-show="isLive"
-                 class="flex items-center justify-center min-h-screen p-4 bg-surface-50 dark:bg-surface-950" x-cloak>
-                <div class="w-full max-w-3xl shadow-sm bg-surface-alt-100 items-center justify-between rounded-xl p-4 outline outline-offset-4 outline-surface-alt-100 dark:outline-outline-700  transition-all ease-in-out duration-200 group" x-bind:class="isReady ? '' : 'hover:outline-offset-0 hover:outline-primary-500 dark:hover:outline-primary-600'">
-                    <div class="flex space-x-4">
-                        <div class="flex items-center justify-between w-full space-x-6">
-                            <div class="flex-shrink-0">
-                                <x-avatar src="{{ $room->track->media->artwork_url ?? 'https://placehold.co/128'}}" size="w-32 h-32" icon-size="2xl" rounded="xl" alt="Media Artwork" class="border-none"/>
-                            </div>
-                            <div class="flex flex-col flex-1 min-w-0 justify-around">
-                                <p class="text-lg font-serif text-on-surface-strong-800 dark:text-on-surface-strong-100 truncate">{{ $room->name }}</p>
-                                <div class="flex flex-col gap-1">
-                                    <p class="text-md truncate max-w-xs">{{ $room->track->title ?? 'No Title Available' }}</p>
-                                    <p class="text-sm tracking-tight uppercase">{{ $room->media->title }}</p>
-                                </div>
-                            </div>
 
-                            <div class="relative z-20 flex justify-start items-center">
-                                <button @click="copyToClipboard();" class="flex flex-col items-center justify-center h-auto px-3 w-16 pt-2 font-medium pb-1.5 text-[0.65rem] uppercase bg-surface-50 dark:bg-surface-950 rounded-xl cursor-pointer border border-neutral-200/60 hover:bg-white active:bg-white focus:bg-white focus:outline-none text-neutral-500 hover:text-neutral-600 group">
-                                    <svg x-show="!copyNotification" class="flex-shrink-0 w-5 h-5 mb-1 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z"/> </svg>
-                                    <span x-show="!copyNotification">Copy</span>
-                                    <svg x-show="copyNotification" class="flex-shrink-0 w-5 h-5 mb-1 text-green-500 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" x-cloak> <path stroke-linecap="round" stroke-linejoin="round" d="M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m8.9-4.414c.376.023.75.05 1.124.08 1.131.094 1.976 1.057 1.976 2.192V16.5A2.25 2.25 0 0118 18.75h-2.25m-7.5-10.5H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V18.75m-7.5-10.5h6.375c.621 0 1.125.504 1.125 1.125v9.375m-8.25-3l1.5 1.5 3-3.75"/> </svg>
-                                    <span x-show="copyNotification" class="tracking-tight text-green-500" x-cloak>Copied</span>
-                                </button>
-                            </div>
+            <!-- Right Column (1/3) - Chat -->
+            <div class="w-1/3 bg-surface-alt-100 rounded-xl p-4 outline outline-offset-4 outline-surface-alt-100 dark:outline-outline-700">
+                <div class="flex flex-col h-full">
+                    <div class="flex-1 overflow-y-auto" id="message-container">
+                        <div class="flex flex-col gap-4">
+                            @foreach ($messages as $message)
+                                @if ($message->user_id === auth()->id())
+                                    <!-- Sent Message -->
+                                    <div class="flex items-end gap-2">
+                                        <div class="ml-auto flex max-w-[70%] flex-col gap-2 rounded-l-radius rounded-tr-radius bg-primary p-4 text-sm text-on-primary dark:bg-primary-dark dark:text-on-primary-dark">
+                                            {{ $message->message }}
+                                            <span class="ml-auto text-xs">{{ $message->created_at->format('h:i A') }}</span>
+                                        </div>
+                                        <span class="flex size-8 items-center justify-center overflow-hidden rounded-full border border-outline bg-surface-alt text-sm font-bold tracking-wider text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark">
+                                            {{ substr($message->user->name, 0, 2) }}
+                                        </span>
+                                    </div>
+                                @else
+                                    <!-- Received Message -->
+                                    <div class="flex items-end gap-2">
+                                        <img class="size-8 rounded-full object-cover" src="https://ui-avatars.com/api/?name={{ urlencode($message->user->name) }}" alt="avatar" />
+                                        <div class="mr-auto flex max-w-[70%] flex-col gap-2 rounded-r-radius rounded-tl-radius bg-surface-alt p-4 text-on-surface dark:bg-surface-dark-alt dark:text-on-surface-dark">
+                                            <span class="font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">{{ $message->user->name }}</span>
+                                            <div class="text-sm">
+                                                {{ $message->message }}
+                                            </div>
+                                            <span class="ml-auto text-xs">{{ $message->created_at->format('h:i A') }}</span>
+                                        </div>
+                                    </div>
+                                @endif
+                            @endforeach
                         </div>
                     </div>
-                    <div class="flex w-full mt-4">
-                        <x-button x-show="!isReady" class="w-full" @click="confirmReady()">I allow audio and I'm ready</x-button>
-                        <div x-show="isReady && !isLoading" class="bg-red-500 w-full">
-                            <div class="flex items-center justify-between w-full">
-                                <span class="text-sm" x-text="formatTime(currentTime)"></span>
-                                <span class="text-sm">
-                                    @php
-                                        $duration = $room->start_time->diffInSeconds($room->end_time);
-                                        $minutes = floor($duration / 60);
-                                        $seconds = $duration % 60;
-                                    @endphp
-                                    {{ sprintf('%02d:%02d', $minutes, $seconds) }}
-                                </span>
-                            </div>
-                            <div class="h-2 rounded-xl bg-secondary-600/20 dark:bg-secondary-500/20">
-                                <div class="h-2 rounded-xl bg-secondary-600 dark:bg-secondary-500" :style="`width: ${currentTime / (endTimestamp - startTimestamp) * 100}%`"></div>
-                            </div>
-                        </div>
+
+                    <!-- Message Input -->
+                    <div class="mt-4">
+                        <form wire:submit.prevent="sendMessage" class="flex gap-2">
+                            <input type="text" wire:model="message" class="flex-1 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-2" placeholder="Type your message...">
+                            <button type="submit" class="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600">
+                                <span class="material-symbols-outlined">send</span>
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
