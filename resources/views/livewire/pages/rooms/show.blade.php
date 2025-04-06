@@ -187,7 +187,7 @@ new class extends Component {
         // Save the permission in localStorage
         const storageKey = `room_${{{ $room->id }}}_audio_permission`;
         localStorage.setItem(storageKey, 'true');
-        
+
         // If we're already live, start playing immediately
         if (this.isLive && this.audioMetadataLoaded && !this.isFinished) {
             this.playAudio();
@@ -328,7 +328,7 @@ new class extends Component {
                             </template>
                             <template x-if="isLive">
                                 <!-- Live View - Playlist Table -->
-                                <div class="overflow-y-auto max-h-[calc(100%-80px)]">
+                                <div class="overflow-y-auto max-h-full">
                                     <table class="w-full">
                                         <thead class="text-left">
                                             <tr class="border-b border-gray-200 dark:border-gray-700">
@@ -428,7 +428,7 @@ new class extends Component {
                             init() {
                                 this.scroll();
                                 this.$refs.scrollToBottom.addEventListener('scroll', () => this.checkScroll());
-                                
+
                                 // Listen for Livewire message updates
                                 Livewire.on('messageAdded', () => {
                                     this.handleNewMessage();
@@ -470,7 +470,7 @@ new class extends Component {
 
                         <!-- Scroll to bottom button -->
                         <div class="fixed bottom-24 right-12 z-50">
-                            <button 
+                            <button
                                 x-show="!isNearBottom"
                                 x-transition:enter="transition ease-out duration-300"
                                 x-transition:enter-start="opacity-0 transform translate-y-2"
