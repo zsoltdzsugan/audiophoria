@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 
-Route::view('/', 'home');
+Route::view('/', 'home')->name('home');
 
 Volt::route('/rooms/{room}', 'pages.rooms.show')->name('rooms.show');
 

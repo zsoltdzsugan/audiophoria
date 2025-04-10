@@ -71,8 +71,8 @@ new class extends Component {
         </div>
     </div>
     <div class="h-1/2 w-full flex">
-        <div class="mx-auto">
-            <div class="w-full max-w-lg items-center p-4">
+        <div class="w-full">
+            <div class="w-full max-w-lg mx-auto items-center p-4">
                 <h3 class="text-xl font-serif mb-6 text-on-surface-strong-800 dark:text-on-surface-strong-100">Currently Live Rooms</h3>
                 @if ($rooms->isEmpty())
                     <div>No available rooms. Create one!</div>
@@ -88,7 +88,7 @@ new class extends Component {
                                         {{ $room->name }}
                                     </h4>
                                     <div class="my-1">
-                                        <h3 class="text-sm truncate font-medium">
+                                        <h3 class="text-sm truncate font-medium max-w-xs">
                                             {{ $room->track->title ?? 'No Title Available' }}
                                         </h3>
                                         <h5 class="text-xs tracking-tight uppercase">{{ $room->media->title }}</h5>

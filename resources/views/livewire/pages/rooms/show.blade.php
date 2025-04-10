@@ -15,7 +15,7 @@ new class extends Component {
         'message' => 'required|string|max:255',
     ];
 
-    public function authenticateUser(): RedirectResponse
+    public function authenticateUser()
     {
         session()->put('auth_redirect', route('rooms.show', $this->room));
         return redirect()->route('login');
