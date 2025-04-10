@@ -107,7 +107,7 @@ This is an example of how to list things you need to use the software and how to
 1. **Clone the repository**  
     ```sh
     git clone https://github.com/zsoltdzsugan/audiophoria.git
-    cd bestshop
+    cd audiophoria
     ```
 2. **Install dependencies**  
     ```sh
