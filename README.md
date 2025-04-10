@@ -20,12 +20,12 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-    <a href="https://github.com/zsoltdzsugan/bestshop">
-        <img src="public/assets/bs.png" alt="Logo" width="500" height="160">
+    <a href="https://github.com/zsoltdzsugan/audiophoria">
+        <img src="public/assets/ap.png" alt="Logo" width="500" height="160">
     </a>
 
   <p align="center">
-    BestShop is a multi-vendor e-commerce platform built with Laravel.
+    Audiophoria is a podcast listening party website built with Laravel.
     <br />
     <br />
     <!--<a href="https://bestshop-main-bhazak.laravel.cloud">View Current Demo Site</a>-->
@@ -85,8 +85,7 @@ This section should list any major frameworks/libraries used to bootstrap your p
 * [![Livewire][livewire.com]][laravel-url]
 * [![AlpineJs][alpine.com]][alpine-url]
 * [![TailwindCSS][tailwind.com]][tailwind-url]
-* [![JQuery][JQuery.com]][JQuery-url]
-* [![MySQL][mysql.com]][mysql-url]
+* [![SQLite][sqlite.com]][sqlite-url]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -137,6 +136,8 @@ This is an example of how to list things you need to use the software and how to
 ## Usage
 
 For now only works with RSS feed!
+Example link: 
+```https://feeds.buzzsprout.com/2198046.rss```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -148,6 +149,7 @@ For now only works with RSS feed!
 - [x] User Authentication
 - [x] Dashboard
 - [x] Show Room
+- [x] Live Chat
 
 See the [open issues](https://github.com/zsoltdzsugan/audiophoria/issues) for a full list of proposed features (and known issues).
 
@@ -157,6 +159,8 @@ See the [open issues](https://github.com/zsoltdzsugan/audiophoria/issues) for a 
 ## Upcoming Features
 
 - **Responsive UI**: A modern and mobile-friendly interface.
+- **Play/Pause**: Working play/pause button for all.
+- **Support other links**: Support for youtube videos, twitch streams.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -176,7 +180,7 @@ See the [open issues](https://github.com/zsoltdzsugan/audiophoria/issues) for a 
 
 Your Name - [@zsolt-dzsugan](https://www.linkedin.com/in/zsolt-dzsugan/) - zsolt.dzsugan@gmail.com
 
-Project Link: [https://github.com/zsoltdzsugan/bestshop.git](https://github.com/zsoltdzsugan/audiophoria.git)
+Project Link: [https://github.com/zsoltdzsugan/audiophoria.git](https://github.com/zsoltdzsugan/audiophoria.git)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -215,8 +219,8 @@ Project Link: [https://github.com/zsoltdzsugan/bestshop.git](https://github.com/
 [license-url]: https://github.com/othneildrew/Best-README-Template/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/othneildrew
-[product-screenshot]: public/assets/home_page_l.png
-[product-screenshot-1]: public/assets/admin_panel.png
+[product-screenshot]: public/assets/dashboard.png
+[product-screenshot-1]: public/assets/show_room.png
 [livewire.com]: https://img.shields.io/badge/Livewire-DD0031?style=for-the-badge&logo=livewire&logoColor=white
 [Laravel.com]: https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white
 [Laravel-url]: https://laravel.com
@@ -228,5 +232,5 @@ Project Link: [https://github.com/zsoltdzsugan/bestshop.git](https://github.com/
 [javascript-url]: https://alpinejs.dev/
 [JQuery.com]: https://img.shields.io/badge/jQuery-0769AD?style=for-the-badge&logo=jquery&logoColor=white
 [JQuery-url]: https://jquery.com 
-[mysql.com]: https://img.shields.io/badge/MySQL-00758f?style=for-the-badge&logo=mysql&logoColor=white
-[mysql-url]: https://www.mysql.com/
+[mysql.com]: https://img.shields.io/badge/SQLite-00758f?style=for-the-badge&logo=sqlite&logoColor=white
+[mysql-url]: https://sqlite.org
