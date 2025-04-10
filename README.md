@@ -79,8 +79,6 @@ The site is designed as a podcast listening site with other people.
 
 ### Built With
 
-This section should list any major frameworks/libraries used to bootstrap your project. Leave any add-ons/plugins for the acknowledgements section. Here are a few examples.
-
 * [![Laravel][Laravel.com]][Laravel-url]
 * [![Livewire][livewire.com]][laravel-url]
 * [![AlpineJs][alpine.com]][alpine-url]
@@ -159,6 +157,8 @@ See the [open issues](https://github.com/zsoltdzsugan/audiophoria/issues) for a 
 ## Upcoming Features
 
 - **Responsive UI**: A modern and mobile-friendly interface.
+- **Search Options**: Search rooms by name/podcast etc.
+- **User Options**: Show user's currently available/future rooms.
 - **Play/Pause**: Working play/pause button for all.
 - **Support other links**: Support for youtube videos, twitch streams.
 
@@ -232,5 +232,5 @@ Project Link: [https://github.com/zsoltdzsugan/audiophoria.git](https://github.c
 [javascript-url]: https://alpinejs.dev/
 [JQuery.com]: https://img.shields.io/badge/jQuery-0769AD?style=for-the-badge&logo=jquery&logoColor=white
 [JQuery-url]: https://jquery.com 
-[mysql.com]: https://img.shields.io/badge/SQLite-00758f?style=for-the-badge&logo=sqlite&logoColor=white
-[mysql-url]: https://sqlite.org
+[sqlite.com]: https://img.shields.io/badge/SQLite-00758f?style=for-the-badge&logo=sqlite&logoColor=white
+[sqlite-url]: https://sqlite.org
