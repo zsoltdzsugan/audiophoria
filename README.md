@@ -208,7 +208,7 @@ Project Link: [https://github.com/zsoltdzsugan/audiophoria.git](https://github.c
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[github-url]: https://github.com/zsoltdzsugan/bestshop
+[github-url]: https://github.com/zsoltdzsugan/audiophoria
 [contributors-shield]: https://img.shields.io/github/contributors/othneildrew/Best-README-Template.svg?style=for-the-badge
 [contributors-url]: https://github.com/othneildrew/Best-README-Template/graphs/contributors
 [forks-shield]: https://img.shields.io/github/forks/othneildrew/Best-README-Template.svg?style=for-the-badge
