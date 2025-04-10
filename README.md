@@ -82,7 +82,7 @@ The site is designed as a podcast listening site with other people.
 This section should list any major frameworks/libraries used to bootstrap your project. Leave any add-ons/plugins for the acknowledgements section. Here are a few examples.
 
 * [![Laravel][Laravel.com]][Laravel-url]
-* [![Blade][blade.com]][Laravel-url]
+* [![Livewire][livewire.com]][livewire-url]
 * [![AlpineJs][alpine.com]][alpine-url]
 * [![TailwindCSS][tailwind.com]][tailwind-url]
 * [![JQuery][JQuery.com]][JQuery-url]
@@ -217,7 +217,7 @@ Project Link: [https://github.com/zsoltdzsugan/bestshop.git](https://github.com/
 [linkedin-url]: https://linkedin.com/in/othneildrew
 [product-screenshot]: public/assets/home_page_l.png
 [product-screenshot-1]: public/assets/admin_panel.png
-[blade.com]: https://img.shields.io/badge/Blade-DD0031?style=for-the-badge&logo=blade&logoColor=white
+[livewire.com]: https://img.shields.io/badge/Livewire-DD0031?style=for-the-badge&logo=livewire&logoColor=white
 [Laravel.com]: https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white
 [Laravel-url]: https://laravel.com
 [tailwind.com]: https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white
