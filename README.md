@@ -82,7 +82,7 @@ The site is designed as a podcast listening site with other people.
 This section should list any major frameworks/libraries used to bootstrap your project. Leave any add-ons/plugins for the acknowledgements section. Here are a few examples.
 
 * [![Laravel][Laravel.com]][Laravel-url]
-* [![Livewire][livewire.com]][livewire-url]
+* [![Livewire][livewire.com]][laravel-url]
 * [![AlpineJs][alpine.com]][alpine-url]
 * [![TailwindCSS][tailwind.com]][tailwind-url]
 * [![JQuery][JQuery.com]][JQuery-url]
