@@ -70,6 +70,8 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
+[![Product Name Screen Shot][product-screenshot]]()
+[![Product Name Screen Shot 1][product-screenshot-1]]()
 This project is currently in development.
 The site is designed as a podcast listening site with other people.
 
