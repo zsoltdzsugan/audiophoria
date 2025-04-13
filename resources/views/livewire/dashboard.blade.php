@@ -63,7 +63,7 @@ new class extends Component {
                             <p class="text-xs font-light px-3 -mb-4">Direct Episode Link or YouTube Link, RSS Feeds will grab the latest episode.</p>
                             </div>
                             <x-datetime-picker wire:model='startTime' placeholder="Listening Party Time" rounded="xl" :min="now()" class="h-12" requires-confirmation="true" />
-                            <x-button type='submit' primary rounded="xl" class="mt-6 w-full rounded-xl">Create Room</x-button>
+                            <x-button type='submit' primary rounded="xl" class="w-full rounded-xl">Create Room</x-button>
                         </form>
                     </div>
                 </div>
